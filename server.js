@@ -1,7 +1,7 @@
 // Dependencies
 const inquirer = require('inquirer');
 const mysql = require('mysql2');
-const cTable = require('console.table');
+const consoleTable = require('console.table');
 
 // Establish connection to mysql
 const connection = mysql.createConnection({
@@ -12,5 +12,3 @@ const connection = mysql.createConnection({
     },
     console.log('Connected to the ems_db database')
 );
-
-
