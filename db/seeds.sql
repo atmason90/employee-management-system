@@ -27,4 +27,4 @@ VALUES  (10, 'Cash', 'Counter', 100),
         (40, 'Judy', 'Law', 400),
         (41, 'Lawrence', 'Judge', 401),
         (50, 'Amanda', 'Manning', 500),
-        (51, 'Carrington', 'Taylor', 501),
+        (51, 'Carrington', 'Taylor', 501);
