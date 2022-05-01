@@ -100,11 +100,9 @@ function addDepartment() {
         name: 'newDepartment',
         message: 'Name of new department:'
     })
-    .then (({ newDepartment }) => {
-        let query = `INSERT INTO department (name) VALUES (${newDepartment});`;
-        db.query(query, (err, res) => {
+    .then(function(answer) {
+        db.query('INSERT INTO department (name) VALUES (?)', [answer.newDepartment], function(err, res) {
             if (err) throw (err);
-            console.log(`Adding ${newDepartment} department`);
             console.table(res);
             startPrompt();
         });
@@ -113,16 +111,84 @@ function addDepartment() {
 
 // add a role
 function addRole() {
-    let query
-}
+    inquirer.prompt([
+        {
+            type: 'input',
+            name: 'newRole',
+            message: 'What is the name of the role?'
+        },
+        {
+            type: 'input',
+            name: 'newSalary',
+            message: 'What is the salary for this role?',
+        },
+        {
+            type: 'input',
+            name: 'newRoleDeptId',
+            message: 'What is the department id #?'
+        }
+    ])
+    .then(function(answer) {
+        db.query('INSERT INTO roles (title, salary, department_id) VALUES (?, ?, ?);', [answer.newRole, answer.newSalary, answer.newRoleDeptId], function(err, res) {
+            if (err) throw (err);
+            console.table(res);
+            startPrompt();
+        });
+    });
+};
 
 // add an employee
 function addEmployee() {
-    let query
-
-}
+    inquirer.prompt([
+        {
+            type: 'input',
+            name: 'newFirstName',
+            message: "What is the employee's first name?",
+        },
+        {
+            type: 'input',
+            name: 'newLastName',
+            message: "What is the employee's last name?"
+        },
+        {
+            type: 'input',
+            name: 'newRoleId',
+            message: "What is the employee's role id #?"
+        },
+        {
+            type: "input",
+            name: 'newManagerId',
+            message: "What is the manager of this employee's id #?"
+        }
+    ])
+    .then(function(answer) {
+        db.query('INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)', [answer.newFirstName, answer.newLastName, answer.newRoleId, answer.newManagerId], function(err, res) {
+            if (err) throw (err);
+            console.table(res);
+            startPrompt();
+        });
+    });
+};
 
 // update employee role
 function updateEmployee() {
-    let query
-}
+    inquirer.prompt([
+        {
+            type: 'input',
+            name: 'updateEmployee',
+            message: 'Which employee would you like to update?'
+        },
+        {
+            type: 'input',
+            name: 'updateRole',
+            message: "What is the employee's new role?"
+        }
+    ])
+    .then(function(answer) {
+        db.query('UPDATE employee SET role_id=? WHERE first_name=?;', [answer.updateEmployee, answer.updateRole], function(err, res) {
+            if (err) throw (err);
+            console.table(res);
+            startPrompt();
+        });
+    });
+};
