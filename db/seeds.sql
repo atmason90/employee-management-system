@@ -18,14 +18,15 @@ VALUES  (100, 'Accountant', 90000, 001),
         
 
 INSERT INTO employee (id, first_name, last_name, role_id, manager_id)
-VALUES  (10, 'Cash', 'Counter', 100, 50),
-        (11, 'Penny', 'Wise', 101, 50),
-        (20, 'Mark', 'Devel', 200, 51),
-        (21, 'Sally', 'Signer', 201, 51),
-        (30, 'Gregor', 'Byte', 300, 52),
-        (31, 'Andrew', 'Mason', 301, 52),
-        (40, 'Judy', 'Law', 400, NULL),
-        (41, 'Lawrence', 'Judge', 401, NULL),
-        (50, 'Amanda', 'Manning', 500, NULL),
-        (51, 'Carrington', 'Taylor', 500, NULL),
-        (52, 'Justin', 'Stilley', 500, NULL);
+VALUES  (1, 'Amanda', 'Manning', 500, NULL),
+        (2, 'Carrington', 'Taylor', 500, NULL),
+        (3, 'Justin', 'Stilley', 500, NULL);
+        (4, 'Cash', 'Counter', 100, 1),
+        (5, 'Penny', 'Wise', 101, 1),
+        (6, 'Mark', 'Devel', 200, 2),
+        (7, 'Sally', 'Signer', 201, 2),
+        (8, 'Gregor', 'Byte', 300, 3),
+        (9, 'Andrew', 'Mason', 301, 3),
+        (10, 'Judy', 'Law', 400, NULL),
+        (11, 'Lawrence', 'Judge', 401, NULL),
+
