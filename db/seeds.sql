@@ -1,32 +1,32 @@
-INSERT INTO department (id, department_name)
-VALUES  (001, 'Accounting'),
-        (002, 'Sales'),
-        (003, 'Engineering'),
-        (004, 'Legal'),
-        (005, 'Management');
+INSERT INTO department (name)
+VALUES  ('Accounting'),
+        ('Sales'),
+        ('Engineering'),
+        ('Legal'),
+        ('Management');
 
-INSERT INTO roles (id, title, salary, department_id)
-VALUES  (100, 'Accountant', 90000, 001),
-        (101, 'Controller', 160000, 001),
-        (200, 'Market Development Representative', 75000, 002),
-        (201, 'Account Executive', 120000, 002),
-        (300, 'Web Developer', 150000, 003),
-        (301, 'Software Architect', 225000, 003),
-        (400, 'Legal Counsel', 200000, 004),
-        (401, 'Lead Legal Counsel', 250000, 004),
-        (500, 'Manager', 300000, 005);
+INSERT INTO roles (title, salary, department_id)
+VALUES  ('Accountant', 90000, 1),
+        ('Controller', 160000, 1),
+        ('Market Development Representative', 75000, 2),
+        ('Account Executive', 120000, 2),
+        ('Web Developer', 150000, 3),
+        ('Software Architect', 225000, 3),
+        ('Legal Counsel', 200000, 4),
+        ('Lead Legal Counsel', 250000, 4),
+        ('Manager', 300000, 5);
         
 
-INSERT INTO employee (id, first_name, last_name, role_id, manager_id)
-VALUES  (1, 'Amanda', 'Manning', 500, NULL),
-        (2, 'Carrington', 'Taylor', 500, NULL),
-        (3, 'Justin', 'Stilley', 500, NULL);
-        (4, 'Cash', 'Counter', 100, 1),
-        (5, 'Penny', 'Wise', 101, 1),
-        (6, 'Mark', 'Devel', 200, 2),
-        (7, 'Sally', 'Signer', 201, 2),
-        (8, 'Gregor', 'Byte', 300, 3),
-        (9, 'Andrew', 'Mason', 301, 3),
-        (10, 'Judy', 'Law', 400, NULL),
-        (11, 'Lawrence', 'Judge', 401, NULL),
+INSERT INTO employee (first_name, last_name, role_id, manager_id)
+VALUES  ('Amanda', 'Manning', 9, NULL),
+        ('Carrington', 'Taylor', 9, NULL),
+        ('Justin', 'Stilley', 9, NULL);
+        ('Cash', 'Counter', 1, 1),
+        ('Penny', 'Wise', 2, 1),
+        ('Mark', 'Devel', 3, 2),
+        ('Sally', 'Signer', 4, 2),
+        ('Gregor', 'Byte', 5, 3),
+        ('Andrew', 'Mason', 6, 3),
+        ('Judy', 'Law', 7, NULL),
+        ('Lawrence', 'Judge', 8, NULL),
 
