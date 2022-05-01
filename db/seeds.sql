@@ -20,7 +20,7 @@ VALUES  ('Accountant', 90000, 1),
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
 VALUES  ('Amanda', 'Manning', 9, NULL),
         ('Carrington', 'Taylor', 9, NULL),
-        ('Justin', 'Stilley', 9, NULL);
+        ('Justin', 'Stilley', 9, NULL),
         ('Cash', 'Counter', 1, 1),
         ('Penny', 'Wise', 2, 1),
         ('Mark', 'Devel', 3, 2),
@@ -28,5 +28,5 @@ VALUES  ('Amanda', 'Manning', 9, NULL),
         ('Gregor', 'Byte', 5, 3),
         ('Andrew', 'Mason', 6, 3),
         ('Judy', 'Law', 7, NULL),
-        ('Lawrence', 'Judge', 8, NULL),
+        ('Lawrence', 'Judge', 8, NULL);
 
