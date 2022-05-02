@@ -192,33 +192,115 @@ function addRole() {
 
 // add an employee
 function addEmployee() {
-    inquirer.prompt([
-        {
-            type: 'input',
-            name: 'newFirstName',
-            message: "What is the employee's first name?",
-        },
-        {
-            type: 'input',
-            name: 'newLastName',
-            message: "What is the employee's last name?"
-        },
-        {
-            type: 'input',
-            name: 'newRoleId',
-            message: "What is the employee's role id #?"
-        },
-        {
-            type: "input",
-            name: 'newManagerId',
-            message: "What is the manager of this employee's id #?"
-        }
-    ])
-    .then(function(answer) {
-        db.query('INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)', [answer.newFirstName, answer.newLastName, answer.newRoleId, answer.newManagerId], function(err, res) {
+    let query1 = "SELECT title FROM roles;";
+    let query2 = "SELECT employee.first_name, employee.last_name, roles.title, roles.salary, department.name, employee.manager_id FROM employee JOIN roles ON roles.id = employee.role_id JOIN department ON roles.department_id = department.id ORDER BY employee.id;";
+
+    db.query(query1, (err, res) => {
+        if (err) throw (err);
+        let rolesList = res;
+        db.query(query2, (err, res) => {
             if (err) throw (err);
+            for (i = 0; i < res.length; i++) {
+                if(res[i].manager_id == 0) {
+                    res[i].manager = "None"
+                } else {
+                    res[i].manager = res[res[i].manager_id - 1].first_name + " " + res[res[i].manager_id - 1].last_name;
+                };
+                delete res[i].manager_id;
+            };
             console.table(res);
-            startPrompt();
+            let managerList = res;
+            let addEmployeePrompt = [
+                {
+                    type: 'input',
+                    name: 'first_name',
+                    message: "What is the new employee's first name?"
+                },
+                {
+                    type: 'input',
+                    name: 'last_name',
+                    message: "What is the new employee's last name?"
+                },
+                {
+                    type: 'list',
+                    name: 'selectRole',
+                    message: "What is the new employee's role?",
+                    choices: function() {
+                        roles = [];
+                        for(i = 0; i < rolesList.length; i++) {
+                            const roleId = i + 1;
+                            roles.push(roleId + ": " + rolesList[i].title);
+                        };
+                        roles.unshift("Exit");
+                        return roles;
+                    }
+                },
+                {
+                    type: 'list',
+                    name: 'selectManager',
+                    message: "Who is the new employee's manager?",
+                    choices: function() {
+                        managers = [];
+                        for(i = 0; i < managerList.length; i++) {
+                            const managerId = i + 1;
+                            managers.push(managerId + ": " + managerList[i].first_name + " " + managerList[i].last_name);
+                        };
+                        managers.unshift("0: None");
+                        managers.unshift("Exit");
+                        return managers;
+                    },
+                    when: function(answers) {
+                        return answers.selectRole !== "Exit"
+                    }
+                }
+            ];
+            inquirer.prompt(addEmployeePrompt)
+            .then((answer) => {
+                if(answer.selectRole == "Exit" || answer.selectManager == "Exit") {
+                    startPrompt();
+                } else {
+                    let query = "INSERT INTO employee SET ?;";
+                    db.query(query,
+                        {
+                            first_name: answer.first_name,
+                            last_name: answer.last_name,
+                            role_id: parseInt(answer.selectRole.split(":")[0]),
+                            manager_id: parseInt(answer.selectManager.split(":")[0])
+                        },
+                        (err, res) => {
+                            if (err) throw (err);
+                        })
+                        let addEmpAgainPrompt = [
+                            {
+                                type: 'list',
+                                name: 'addEmpAgain',
+                                message: 'Would you like to add another employee?',
+                                choices: ["Yes", "No"]
+                            }
+                        ];
+                        inquirer.prompt(addEmpAgainPrompt)
+                        .then((answer) => {
+                            let query = "SELECT employee.first_name, employee.last_name, roles.title, roles.salary, department.name, employee.manager_id FROM employee JOIN roles ON roles.id = employee.role_id JOIN department ON roles.department_id = department.id ORDER BY employee.id;";
+                            db.query(query, (err, res) => {
+                                if (err) throw (err);
+                                if (answer.addEmpAgain == "Yes") {
+                                    addEmployee();
+                                } else if (answer.addEmpAgain == "No") {
+                                    for (i = 0; i < res.length; i++) {
+                                        if(res[i].manager_id == 0) {
+                                            res[i].manager = "None"
+                                        } else {
+                                            res[i].manager = res[res[i].manager_id - 1].first_name + " " + res[res[i].manager_id - 1].last_name;
+                                        };
+                                        delete res[i].manager_id;
+                                    };
+                                    console.table(res);
+                                    startPrompt();
+                                };
+                            });
+                        });
+                };
+            });
         });
     });
 };
