@@ -84,7 +84,7 @@ function viewRoles() {
 // view all employees
 function viewEmployees() {
     console.log('Viewing all employees');
-    let query = 'SELECT employee.id, employee.first_name, employee.last_name, roles.title, department.name AS department, roles.salary, manager.first_name AS "manager first name", manager.last_name AS "manager last name", manager.id AS "manager id" FROM employee LEFT JOIN roles ON employee.role_id = roles.id LEFT JOIN department ON roles.department_id = department.id LEFT JOIN employee manager ON employee.manager_id = manager.id;';
+    let query = 'SELECT employee.id, employee.first_name, employee.last_name, roles.title, department.name AS department, roles.salary, CONCAT(manager.first_name, " ", manager.last_name) AS manager, manager.id AS "manager id" FROM employee LEFT JOIN roles ON employee.role_id = roles.id LEFT JOIN department ON roles.department_id = department.id LEFT JOIN employee manager ON employee.manager_id = manager.id;';
 
     db.query(query, (err, res) => {
         if (err) throw (err);
@@ -110,48 +110,103 @@ function addDepartment() {
     });
 };
 
-let depts = [];
-function getDepts() {
-    db.promise().query('SELECT name FROM department;')
-        .then(([res]) => {
-        res.forEach((el) => {
-            depts.push(el.name);
-        });
-        return depts;
-    });
-}
+// returns list of departments as an array
+// let depts = [];
+// function getDepts() {
+//     db.promise().query('SELECT name FROM department;')
+//         .then(([res]) => {
+//         res.forEach((el) => {
+//             depts.push(el.name);
+//         });
+//         return depts;
+//     });
+// }
 
 
 // add a role
 function addRole() {
-    getDepts();
-    inquirer.prompt([
-        {
-            type: 'input',
-            name: 'newRole',
-            message: 'What is the name of the role?'
-        },
-        {
-            type: 'input',
-            name: 'newSalary',
-            message: 'What is the salary for this role?',
-        },
-        {
-            // change type to select from departments from sql
-            type: 'list',
-            name: 'newRoleDeptId',
-            message: 'What department is this role in?',
-            choices: depts
-        }
-    ])
-    .then(function(answer) {
-        db.query('INSERT INTO roles (title, salary, department_id) VALUES (?, ?, ?);', [answer.newRole, answer.newSalary, answer.newRoleDeptId], function(err, res) {
+    let query1 = 'SELECT roles.title AS role, roles.salary, department.dept.name FROM roles LEFT JOIN department ON department.id = roles.department_id;';
+    let query2 = 'SELECT department.name FROM department;';
+
+    db.query(query1, (err, res) => {
+        if (err) throw (err);
+        console.table(res);
+        db.query(query2, (err, res) => {
             if (err) throw (err);
-            console.table(res);
-            startPrompt();
-        });
-    });
-};
+            let deptList = res;
+            let addRolePrompt = [
+                {
+                    type: 'input',
+                    name: 'newRole',
+                    message: 'What is the name of the role?'
+                },
+                {
+                    type: 'input',
+                    name: 'newSalary',
+                    message: 'What is the salary?'
+                },
+                {
+                    type: 'list',
+                    name: 'newRoleDept',
+                    message: "Select a department.",
+                    choices: function() {
+                        depts = [];
+                        for(i = 0; i < deptList.length; i++) {
+                            const roleId = i + 1;
+                            depts.push(roleId + ": " + deptList[i].name);
+                        };
+                        depts.unshift("0: Exit");
+                        return depts;
+                    }
+                }
+            ];
+            inquirer.prompt(addRolePrompt)
+            .then((answer) => {
+                if(answer.newRoleDept == "0: Exit") {
+                    startPrompt();
+                } else {
+                    let query = "INSERT INTO roles SET ?;";
+                    db.query(query,
+                        {
+                            title: answer.newRole,
+                            salary: answer.newSalary,
+                            department_id: parseInt(answer.newRoleDept.split(":")[0])
+                        }, (err, res) => {
+                            if (err) throw (err);
+                        });
+                }
+            })
+        })
+    })
+}
+// function addRole() {
+//     getDepts();
+//     inquirer.prompt([
+//         {
+//             type: 'input',
+//             name: 'newRole',
+//             message: 'What is the name of the role?'
+//         },
+//         {
+//             type: 'input',
+//             name: 'newSalary',
+//             message: 'What is the salary for this role?',
+//         },
+//         {
+//             type: 'list',
+//             name: 'newRoleDeptId',
+//             message: 'What department is this role in?',
+//             choices: depts
+//         }
+//     ])
+//     .then(function(answer) {
+//         db.query('INSERT INTO roles (title, salary, department_id) VALUES (?, ?, ?);', [answer.newRole, answer.newSalary, answer.newRoleDeptId], function(err, res) {
+//             if (err) throw (err);
+//             console.table(res);
+//             startPrompt();
+//         });
+//     });
+// };
 
 // add an employee
 function addEmployee() {
