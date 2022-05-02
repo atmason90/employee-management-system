@@ -72,7 +72,7 @@ function viewDepartments() {
 // view all roles
 function viewRoles() {
     console.log('Viewing all roles');
-    let query = 'SELECT * FROM ems_db.roles;';
+    let query = 'SELECT roles.id, roles.title, roles.salary, department.name AS department FROM ems_db.roles LEFT JOIN ems_db.department ON roles.department_id = department.id;';
 
     db.query(query, (err, res) => {
         if (err) throw (err);
@@ -84,7 +84,7 @@ function viewRoles() {
 // view all employees
 function viewEmployees() {
     console.log('Viewing all employees');
-    let query = 'SELECT * FROM ems_db.employee;';
+    let query = 'SELECT employee.id, employee.first_name, employee.last_name, roles.title, department.name AS department, roles.salary, employee.first_name AS manager first name, employee.last_name AS manager last name, employee.id AS manager id FROM;';
 
     db.query(query, (err, res) => {
         if (err) throw (err);
