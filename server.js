@@ -110,27 +110,15 @@ function addDepartment() {
     });
 };
 
-// returns list of departments as an array
-// let depts = [];
-// function getDepts() {
-//     db.promise().query('SELECT name FROM department;')
-//         .then(([res]) => {
-//         res.forEach((el) => {
-//             depts.push(el.name);
-//         });
-//         return depts;
-//     });
-// }
-
 
 // add a role
 function addRole() {
-    let query1 = 'SELECT roles.title AS role, roles.salary, department.dept.name FROM roles LEFT JOIN department ON department.id = roles.department_id;';
+    let query1 = 'SELECT roles.title AS role, roles.salary, department.name FROM roles LEFT JOIN department ON department.id = roles.department_id;';
     let query2 = 'SELECT department.name FROM department;';
 
     db.query(query1, (err, res) => {
         if (err) throw (err);
-        console.table(res);
+        // console.table(res);
         db.query(query2, (err, res) => {
             if (err) throw (err);
             let deptList = res;
@@ -174,39 +162,33 @@ function addRole() {
                         }, (err, res) => {
                             if (err) throw (err);
                         });
-                }
-            })
-        })
-    })
-}
-// function addRole() {
-//     getDepts();
-//     inquirer.prompt([
-//         {
-//             type: 'input',
-//             name: 'newRole',
-//             message: 'What is the name of the role?'
-//         },
-//         {
-//             type: 'input',
-//             name: 'newSalary',
-//             message: 'What is the salary for this role?',
-//         },
-//         {
-//             type: 'list',
-//             name: 'newRoleDeptId',
-//             message: 'What department is this role in?',
-//             choices: depts
-//         }
-//     ])
-//     .then(function(answer) {
-//         db.query('INSERT INTO roles (title, salary, department_id) VALUES (?, ?, ?);', [answer.newRole, answer.newSalary, answer.newRoleDeptId], function(err, res) {
-//             if (err) throw (err);
-//             console.table(res);
-//             startPrompt();
-//         });
-//     });
-// };
+                        let addRoleAgain = [
+                            {
+                                type: 'list',
+                                name: 'addRoleAgain',
+                                message: 'Would you like to add another role?',
+                                choices: ["Yes", "No"]
+                            }
+                        ];
+                        inquirer.prompt(addRoleAgain)
+                        .then((answer) => {
+                            let query = "SELECT roles.id, roles.title AS roles, department.name FROM roles LEFT JOIN department ON department.id = roles.department_id;";
+                            db.query(query, (err, res) => {
+                                if (err) throw (err);
+                                if (answer.addRoleAgain == "Yes") {
+                                    addRole();
+                                } else if (answer.addRoleAgain == "No") {
+                                    console.table(res),
+                                    startPrompt();
+                                };
+                            });
+                        });
+                };
+            });
+        });
+    });
+};
+
 
 // add an employee
 function addEmployee() {
