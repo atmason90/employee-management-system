@@ -84,7 +84,7 @@ function viewRoles() {
 // view all employees
 function viewEmployees() {
     console.log('Viewing all employees');
-    let query = 'SELECT employee.id, employee.first_name, employee.last_name, roles.title, department.name AS department, roles.salary, employee.first_name AS manager first name, employee.last_name AS manager last name, employee.id AS manager id FROM;';
+    let query = 'SELECT employee.id, employee.first_name, employee.last_name, roles.title, department.name AS department, roles.salary, manager.first_name AS "manager first name", manager.last_name AS "manager last name", manager.id AS "manager id" FROM employee LEFT JOIN roles ON employee.role_id = roles.id LEFT JOIN department ON roles.department_id = department.id LEFT JOIN employee manager ON employee.manager_id = manager.id;';
 
     db.query(query, (err, res) => {
         if (err) throw (err);
@@ -101,7 +101,8 @@ function addDepartment() {
         message: 'Name of new department:'
     })
     .then(function(answer) {
-        db.query('INSERT INTO department (name) VALUES (?)', [answer.newDepartment], function(err, res) {
+        let query = 'INSERT INTO department (name) VALUES (?)'
+        db.query(query, [answer.newDepartment], function(err, res) {
             if (err) throw (err);
             console.table(res);
             startPrompt();
@@ -109,8 +110,21 @@ function addDepartment() {
     });
 };
 
+let depts = [];
+function getDepts() {
+    db.promise().query('SELECT name FROM department;')
+        .then(([res]) => {
+        res.forEach((el) => {
+            depts.push(el.name);
+        });
+        return depts;
+    });
+}
+
+
 // add a role
 function addRole() {
+    getDepts();
     inquirer.prompt([
         {
             type: 'input',
@@ -123,9 +137,11 @@ function addRole() {
             message: 'What is the salary for this role?',
         },
         {
-            type: 'input',
+            // change type to select from departments from sql
+            type: 'list',
             name: 'newRoleDeptId',
-            message: 'What is the department id #?'
+            message: 'What department is this role in?',
+            choices: depts
         }
     ])
     .then(function(answer) {
