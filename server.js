@@ -181,11 +181,11 @@ function updateEmployee() {
         {
             type: 'input',
             name: 'updateRole',
-            message: "What is the employee's new role?"
+            message: "What is the employee's new role id#?"
         }
     ])
     .then(function(answer) {
-        db.query('UPDATE employee SET role_id=? WHERE first_name=?;', [answer.updateEmployee, answer.updateRole], function(err, res) {
+        db.query('UPDATE employee SET role_id=? WHERE first_name=?;', [answer.updateRole, answer.updateEmployee], function(err, res) {
             if (err) throw (err);
             console.table(res);
             startPrompt();
