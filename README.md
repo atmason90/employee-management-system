@@ -20,7 +20,7 @@ This command line application uses node.js, inquirer, and mysql as it's core tec
 
 ## Application Demo
 
-
+https://user-images.githubusercontent.com/99947655/166392001-e153fc6e-ddc9-4334-8ab9-fb791541c65e.mp4
 
 ## Code Examples
 
