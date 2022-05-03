@@ -1,10 +1,10 @@
-// Dependencies
+// Dependencies===================================================
 const inquirer = require('inquirer');
 const mysql = require('mysql2');
 const consoleTable = require('console.table');
 const { start } = require('repl');
 
-// Establish connection to mysql
+// Establish connection to mysql==================================
 const db = mysql.createConnection({
     host: 'localhost',
     user: 'root',
@@ -14,13 +14,13 @@ const db = mysql.createConnection({
     console.log('Connected to the ems_db database')
 );
 
-// connect to mysql
+// connect to mysql==============================================
 db.connect (function (err) {
     if (err) throw (err);
     startPrompt();
 });
 
-// initial prompt
+// initial prompt================================================
 function startPrompt() {
     inquirer.prompt({
         type: 'list',
@@ -58,7 +58,7 @@ function startPrompt() {
     });
 };
 
-// view all departments
+// view all departments============================================
 function viewDepartments() {
     console.log('Viewing all departments');
     let query = 'SELECT * FROM ems_db.department;';
@@ -70,7 +70,7 @@ function viewDepartments() {
     });
 };
 
-// view all roles
+// view all roles==================================================
 function viewRoles() {
     console.log('Viewing all roles');
     let query = 'SELECT roles.id, roles.title, roles.salary, department.name AS department FROM ems_db.roles LEFT JOIN ems_db.department ON roles.department_id = department.id;';
@@ -82,7 +82,7 @@ function viewRoles() {
     });
 };
 
-// view all employees
+// view all employees==============================================
 function viewEmployees() {
     console.log('Viewing all employees');
     let query = 'SELECT employee.id, employee.first_name, employee.last_name, roles.title, department.name AS department, roles.salary, CONCAT(manager.first_name, " ", manager.last_name) AS manager, manager.id AS "manager id" FROM employee LEFT JOIN roles ON employee.role_id = roles.id LEFT JOIN department ON roles.department_id = department.id LEFT JOIN employee manager ON employee.manager_id = manager.id;';
@@ -94,7 +94,7 @@ function viewEmployees() {
     });
 };
 
-// add a department
+// add a department================================================
 function addDepartment() {
     inquirer.prompt({
         type: 'input',
@@ -112,14 +112,13 @@ function addDepartment() {
 };
 
 
-// add a role
+// add a role====================================================
 function addRole() {
     let query1 = 'SELECT roles.title AS role, roles.salary, department.name FROM roles LEFT JOIN department ON department.id = roles.department_id;';
     let query2 = 'SELECT department.name FROM department;';
 
     db.query(query1, (err, res) => {
         if (err) throw (err);
-        // console.table(res);
         db.query(query2, (err, res) => {
             if (err) throw (err);
             let deptList = res;
@@ -191,7 +190,7 @@ function addRole() {
 };
 
 
-// add an employee
+// add an employee=============================================
 function addEmployee() {
     let query = "SELECT title FROM roles;";
     let query2 = "SELECT employee.first_name, employee.last_name, roles.title, roles.salary, department.name, employee.manager_id FROM employee JOIN roles ON roles.id = employee.role_id JOIN department ON roles.department_id = department.id ORDER BY employee.id;";
@@ -199,9 +198,7 @@ function addEmployee() {
     db.query(query, (err, res) => {
         if (err) throw (err);
         let rolesList = res;
-        // console.table(rolesList);
         db.query(query2, (err, res) => {
-            // console.table(res);
             if (err) throw (err);
             for (i = 0; i < res.length; i++) {
                 if(res[i].manager_id == 0) {
@@ -302,7 +299,7 @@ function addEmployee() {
     })
 };
 
-// update employee role
+// update employee role====================================
 function updateEmployee() {
     chooseEmployee();
 };
@@ -362,41 +359,4 @@ function updatePrompt(employeeChoice, roleChoice) {
     })
 };
     
-    
-    
-    // inquirer.prompt([
-    //     {
-    //         type: 'list',
-    //         name: 'updateEmployee',
-    //         message: "Which employee's role do you want to update?",
-    //         choices: 
-               
-              
-    //         type: 'list',
-    //         name: 'updateRole',
-    //         message: "What is the employee's new role?",
-    //         choices: 
-               
-           
-
-
-    // inquirer.prompt([
-    //     {
-    //         type: 'input',
-    //         name: 'updateEmployee',
-    //         message: 'Which employee would you like to update?'
-    //     },
-    //     {
-    //         type: 'input',
-    //         name: 'updateRole',
-    //         message: "What is the employee's new role id#?"
-    //     }
-    // ])
-    // .then(function(answer) {
-    //     db.query('UPDATE employee SET role_id=? WHERE first_name=?;', [answer.updateRole, answer.updateEmployee], function(err, res) {
-    //         if (err) throw (err);
-    //         console.table(res);
-    //         startPrompt();
-    //     });
-    // });
 
